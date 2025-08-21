@@ -79,6 +79,8 @@ func (k *KonaNode) Start() {
 			k.userProxy.Close()
 		})
 		k.userRPC = "http://" + k.userProxy.Addr()
+
+		println("userRPC", k.userRPC)
 	}
 	// Create the sub-process.
 	// We pipe sub-process logs to the test-logger.
@@ -107,13 +109,12 @@ func (k *KonaNode) Start() {
 	k.p.Require().NoError(err, "Must start")
 
 	var userRPCAddr string
-	k.p.Require().NoError(tasks.Await(k.p.Ctx(), userRPC, &k.userRPC), "need user RPC")
+	k.p.Require().NoError(tasks.Await(k.p.Ctx(), userRPC, &userRPCAddr), "need user RPC")
 
 	k.userProxy.SetUpstream(ProxyAddr(k.p.Require(), userRPCAddr))
 }
 
 // Stop stops the kona node.
-// warning: no restarts supported yet, since the RPC port is not remembered.
 func (k *KonaNode) Stop() {
 	k.mu.Lock()
 	defer k.mu.Unlock()
