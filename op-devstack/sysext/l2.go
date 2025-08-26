@@ -119,11 +119,15 @@ func (o *Orchestrator) hydrateL2ELCL(node *descriptors.Node, l2Net stack.Extensi
 	clService, ok := node.Services[CLServiceName]
 	require.True(ok, "need L2 CL service for chain", l2ID)
 
+	endpoint, _, err := o.findProtocolService(clService, RPCProtocol)
+	require.NoError(err)
+
 	clClient := o.rpcClient(l2Net.T(), clService, RPCProtocol, "/", opts...)
 	l2CL := shim.NewL2CLNode(shim.L2CLNodeConfig{
 		ID:           stack.NewL2CLNodeID(clService.Name, l2ID.ChainID()),
 		CommonConfig: shim.NewCommonConfig(l2Net.T()),
 		Client:       clClient,
+		UserRPC:      endpoint,
 	})
 	l2Net.AddL2CLNode(l2CL)
 	l2CL.(stack.LinkableL2CLNode).LinkEL(l2EL)

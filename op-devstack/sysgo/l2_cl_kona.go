@@ -54,6 +54,7 @@ func (k *KonaNode) hydrate(system stack.ExtensibleSystem) {
 		CommonConfig:     shim.NewCommonConfig(system.T()),
 		ID:               k.id,
 		Client:           rpcCl,
+		UserRPC:          k.userRPC,
 		InteropEndpoint:  k.interopEndpoint,
 		InteropJwtSecret: k.interopJwtSecret,
 	})
